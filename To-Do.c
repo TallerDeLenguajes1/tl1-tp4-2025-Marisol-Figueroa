@@ -18,6 +18,8 @@ Nodo *CrearListaVacia();
 Nodo *CrearNodo(char *Descripcion, int Duracion, int id);
 void InsertarNodo(Nodo **start, Nodo *Nodot1);
 void InsertarAlFinal(Nodo **start, Nodo *Nodot1);
+Nodo *BuscarPorId(Nodo *start, Nodo *Trealizadas,int idBuscado);
+Nodo *BuscarPorPalabra(Nodo *start,Nodo *Trealizadas,char *PalabraClave);
 Nodo *EliminarNodo(Nodo **start, Nodo *Nodot1);
 
 void MostrarTareasPendientes(Nodo *start);
@@ -32,10 +34,14 @@ int main() {
     int duracion;
     char buffer[500];
     char respuesta;
+    int BuscarId;
+    char PalabraClave[100];
 
     do {
         printf("\n----MENU----\n");
         printf("1 : Cargar tareas pendientes\n");
+        printf("2 : Buscar tarea por Id\n");
+        printf("3 : Buscar por palabra clave\n");
         printf("0 : Salir\n");
         printf("Seleccione una opcion: ");
         scanf("%d", &opcion);
@@ -84,6 +90,19 @@ int main() {
             MostrarTareasPendientes(start);
             MostrarTareasRealizadas(Trealizadas);
         }
+        if (opcion == 2)
+        {
+            printf("Escriba el Id:\n");
+            scanf("%d", &BuscarId);
+            BuscarPorId(start,Trealizadas,BuscarId);
+        }
+        if (opcion == 3)
+        {
+            printf("Escriba la palabra clave:\n");
+            scanf("%s", &PalabraClave);
+            BuscarPorPalabra(start,Trealizadas,PalabraClave);
+        }
+        
 
     } while (opcion != 0);
 
@@ -118,6 +137,64 @@ void InsertarAlFinal(Nodo **start, Nodo *NodoT1) {
             auxiliar = auxiliar->Siguiente;
         }
         auxiliar->Siguiente = NodoT1;
+    }
+}
+
+Nodo *BuscarPorId(Nodo *start, Nodo *Trealizadas, int idBuscado) {
+    Nodo *aux = start;
+    while (aux != NULL) {
+        if (aux->T.TareaID == idBuscado) {
+            printf("Tareas pendientes encontrada:\n");
+            printf("Id: %d\nDescripcion: %s\nDuracion: %d\n", 
+            aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+            
+        }
+        aux = aux->Siguiente;
+        return aux;
+    }
+
+    aux = Trealizadas;
+    while (aux != NULL) {
+        if (aux->T.TareaID == idBuscado) {
+            printf("Tarea realizada encontrada:\n");
+            printf("ID: %d\nDescripcion: %s\nDuracion: %d\n",
+            aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+            
+        }
+        aux = aux->Siguiente;
+        return aux;
+    }
+    printf("No se encontraron tareas con el id ingresado");
+}
+
+
+Nodo *BuscarPorPalabra(Nodo *start,Nodo *Trealizadas,char *PalabraClave){
+    int encontrar = 0;
+
+    Nodo *aux = start;
+    while (aux != NULL) {
+        if (strstr(aux->T.Descripcion, PalabraClave)) {
+            printf("Tarea pendiente encontrada:\n");
+            printf("Id: %d\nDescripcion: %s\nDuracion: %d\n", 
+            aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+            encontrar = 1;
+        }
+        aux = aux->Siguiente;
+    }
+
+    aux = Trealizadas;
+    while (aux != NULL) {
+        if (strstr(aux->T.Descripcion, PalabraClave)) {
+            printf("Tarea realizada encontrada:\n");
+            printf("Id: %d\nDescripcion: %s\nDuracion: %d\n", 
+            aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+            encontrar = 1;
+        }
+        aux = aux->Siguiente;
+    }
+
+    if (!encontrar) {
+        printf("No se encontraron tareas con la palabra clave \"%s\".\n", PalabraClave);
     }
 }
 
