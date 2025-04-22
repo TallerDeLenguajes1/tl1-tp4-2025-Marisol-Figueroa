@@ -18,12 +18,12 @@ Nodo *CrearListaVacia();
 Nodo *CrearNodo(char *Descripcion, int Duracion, int id);
 void InsertarNodo(Nodo **start, Nodo *Nodot1);
 void InsertarAlFinal(Nodo **start, Nodo *Nodot1);
-Nodo *BuscarPorId(Nodo *start, Nodo *Trealizadas,int idBuscado);
-Nodo *BuscarPorPalabra(Nodo *start,Nodo *Trealizadas,char *PalabraClave);
-Nodo *EliminarNodo(Nodo **start, Nodo *Nodot1);
-
+Nodo *QuitarNodo(Nodo **start, Nodo *Nodot1);
+void EliminarNodo(Nodo *nodo);
 void MostrarTareasPendientes(Nodo *start);
 void MostrarTareasRealizadas(Nodo *Trealizadas);
+Nodo *BuscarPorId(Nodo *start, Nodo *Trealizadas,int idBuscado);
+Nodo *BuscarPorPalabra(Nodo *start,Nodo *Trealizadas,char *PalabraClave);
 
 //Main principal
 int main() {
@@ -79,7 +79,7 @@ int main() {
                 getchar();
 
                 if (respuesta == 's' || respuesta == 'S') {
-                    EliminarNodo(&start, tareaPendiente);
+                    QuitarNodo(&start, tareaPendiente);
                     tareaPendiente->Siguiente = NULL;
                     InsertarAlFinal(&Trealizadas, tareaPendiente);
                 }
@@ -99,12 +99,14 @@ int main() {
         if (opcion == 3)
         {
             printf("Escriba la palabra clave:\n");
-            scanf("%s", &PalabraClave);
+            scanf("%s", PalabraClave);
             BuscarPorPalabra(start,Trealizadas,PalabraClave);
         }
         
 
     } while (opcion != 0);
+    EliminarNodo(start);
+    EliminarNodo(Trealizadas);
 
     return 0;
 }
@@ -147,10 +149,10 @@ Nodo *BuscarPorId(Nodo *start, Nodo *Trealizadas, int idBuscado) {
             printf("Tareas pendientes encontrada:\n");
             printf("Id: %d\nDescripcion: %s\nDuracion: %d\n", 
             aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
-            
+            return aux;
         }
         aux = aux->Siguiente;
-        return aux;
+        
     }
 
     aux = Trealizadas;
@@ -159,10 +161,10 @@ Nodo *BuscarPorId(Nodo *start, Nodo *Trealizadas, int idBuscado) {
             printf("Tarea realizada encontrada:\n");
             printf("ID: %d\nDescripcion: %s\nDuracion: %d\n",
             aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
-            
+            return aux;
         }
         aux = aux->Siguiente;
-        return aux;
+        
     }
     printf("No se encontraron tareas con el id ingresado");
 }
@@ -194,11 +196,11 @@ Nodo *BuscarPorPalabra(Nodo *start,Nodo *Trealizadas,char *PalabraClave){
     }
 
     if (!encontrar) {
-        printf("No se encontraron tareas con la palabra clave \"%s\".\n", PalabraClave);
+        printf("No se encontraron tareas con la palabra clave :\"%s\"\n", PalabraClave);
     }
 }
 
-Nodo *EliminarNodo(Nodo **start, Nodo *Nodot1) {
+Nodo *QuitarNodo(Nodo **start, Nodo *Nodot1) {
     Nodo **aux = start;
     while (*aux != NULL && *aux != Nodot1) {
         aux = &(*aux)->Siguiente;
@@ -210,6 +212,13 @@ Nodo *EliminarNodo(Nodo **start, Nodo *Nodot1) {
         return temp;
     }
     return NULL;
+}
+void EliminarNodo(Nodo *nodo)
+{
+    if (nodo) {
+        free(nodo->T.Descripcion); 
+        free(nodo);                
+    }
 }
 
 void MostrarTareasPendientes(Nodo *start) {
